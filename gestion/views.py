@@ -76,7 +76,8 @@ def modifier_profil(request):
         user.save()
         messages.success(request, "Profil mis à jour avec succès.")
     return redirect('profil')
-
+    
+@login_required
 def accueil_public(request):
     return render(request, 'accueil_public.html')  # page simple avec image et navbar
 
@@ -157,6 +158,7 @@ def ajouter_livre(request):
         form = BookForm()
     return render(request, 'ajouter_livre.html', {'form': form})
 
+@login_required
 def adminPage(request):
     User = get_user_model() 
     nb_users = User.objects.count()
@@ -175,12 +177,12 @@ def adminPage(request):
 
 
 
-
+@login_required
 def gestion_utilisateurs(request):
     utilisateurs = CustomUser.objects.all()
     return render(request, 'gestion_utilisateurs.html', {'utilisateurs': utilisateurs})
 
-
+@login_required
 def supprimer_utilisateur(request, user_id):
     if request.user.is_superuser:  
         utilisateur = get_object_or_404(CustomUser, id=user_id)
@@ -196,7 +198,7 @@ def supprimer_utilisateur(request, user_id):
 
 
 
-
+@login_required
 def gestion_categories(request):
     categories = Categorie.objects.all()
 
@@ -230,7 +232,7 @@ def gestion_categories(request):
     return render(request, 'gestion_categories.html', {'categories': categories})
 
 
-
+@login_required
 def gestion_livres(request):
     livres = Book.objects.select_related('categorie').all()
     categories = Categorie.objects.all()
@@ -291,8 +293,10 @@ def dashboard_etudiant(request):
     total_livres = Book.objects.count()
     total_categories = Categorie.objects.count()
     total_lecteurs = CustomUser.objects.filter(role='etudiant').count()
-    nb_consultations = Consultation.objects.filter(utilisateur=request.user).count()
-    nb_telechargements = Telechargement.objects.filter(utilisateur=request.user).count()
+
+    # Comptage sans doublons (livres distincts)
+    nb_consultations = Consultation.objects.filter(utilisateur=request.user).values('Book').distinct().count()
+    nb_telechargements = Telechargement.objects.filter(utilisateur=request.user).values('Book').distinct().count()
 
     context = {
         'total_livres': total_livres,
@@ -318,7 +322,7 @@ def promouvoir_admin(request, user_id):
     
     return redirect('utilisateurs')
 
-
+@login_required
 def retirer_admin(request, user_id):
     if not request.user.is_authenticated or not request.user.is_superuser:
         return redirect('acceuil')
@@ -363,11 +367,13 @@ def valider_ou_supprimer_livre(request, livre_id):
 
     return redirect('livres_en_attente')
 
+@login_required
 def liste_utilisateurs(request):
     # ta logique pour afficher les utilisateurs
     utilisateurs = CustomUser.objects.all()
     return render(request, 'gestionutilisateur.html', {'utilisateurs': utilisateurs})
 
+@login_required
 def lire_livre(request, livre_id):
     livre = get_object_or_404(Book, id=livre_id)
     if livre.pdf:
@@ -375,9 +381,8 @@ def lire_livre(request, livre_id):
     else:
         raise Http404("Fichier introuvable")
 
-def dashboard_view(request):
-    return render(request, 'gestion/index.html')
 
+@login_required
 def telecharger_document(request, document_id):
     document = get_object_or_404(Document, pk=document_id)
 
@@ -386,6 +391,7 @@ def telecharger_document(request, document_id):
 
     return FileResponse(document.fichier.open(), as_attachment=True, filename=document.fichier.name)
 
+@login_required
 def detail_document(request, document_id):
     document = get_object_or_404(Document, pk=document_id)
 
@@ -395,6 +401,7 @@ def detail_document(request, document_id):
 
     return render(request, 'detail_document.html', {'document': document})
 
+@login_required
 def consulter_livre(request, book_id):
     livre = get_object_or_404(Book, pk=book_id)
     if request.user.is_authenticated:
@@ -402,6 +409,7 @@ def consulter_livre(request, book_id):
 
     return FileResponse(open(livre.pdf.path, 'rb'), content_type='application/pdf')
 
+@login_required
 def telecharger_livre(request, book_id):
     livre = get_object_or_404(Book, pk=book_id)
     if request.user.is_authenticated:
@@ -409,3 +417,14 @@ def telecharger_livre(request, book_id):
 
     response = FileResponse(open(livre.pdf.path, 'rb'), as_attachment=True)
     return response
+@login_required
+def livres_consultes(request):
+    consultations = Consultation.objects.filter(utilisateur=request.user)
+    livres_uniques = list(set(c.Book for c in consultations))
+    return render(request, 'livres_consultes.html', {'livres': livres_uniques})
+
+@login_required
+def livres_telecharges(request):
+    telechargements = Telechargement.objects.filter(utilisateur=request.user)
+    livres_uniques = list(set(t.Book for t in telechargements))
+    return render(request, 'livres_telecharges.html', {'livres': livres_uniques})

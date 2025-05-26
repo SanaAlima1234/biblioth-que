@@ -27,11 +27,12 @@ urlpatterns = [
     path('utilisateur/retirer_admin/<int:user_id>/', views.retirer_admin, name='retirer_admin'),
     path('utilisateurs/', views.liste_utilisateurs, name='utilisateurs'),
     path('livre/lire/<int:livre_id>/', views.lire_livre, name='lire_livre'),
-    path('dashboard/', views.dashboard_view, name='dashboard'),
     path('livre/<int:book_id>/consulter/', views.consulter_livre, name='consulter_livre'),
     path('livre/<int:book_id>/telecharger/', views.telecharger_livre, name='telecharger_livre'),
     path('consulter/<int:book_id>/', views.consulter_livre, name='consulter_livre'),
     path('telecharger/<int:book_id>/', views.telecharger_livre, name='telecharger_livre'),
+    path('mes-livres-consultes/', views.livres_consultes, name='livres_consultes'),
+    path('mes-livres-telecharges/', views.livres_telecharges, name='livres_telecharges'),
 
 
 ]

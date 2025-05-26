@@ -1,0 +1,8 @@
+<h2>Livres que vous avez téléchargés</h2>
+<ul>
+  {% for livre in livres %}
+    <li>{{ livre.title }} - Auteur : {{ livre.author }}</li>
+  {% empty %}
+    <li>Vous n'avez téléchargé aucun livre pour le moment.</li>
+  {% endfor %}
+</ul>
