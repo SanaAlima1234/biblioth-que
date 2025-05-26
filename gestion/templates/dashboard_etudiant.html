@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'fontawesome/css/all.css' %}">
+
+<style>
+  .stat-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    padding: 1.5rem;
+    background-color: #ffffff;
+    transition: transform 0.2s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .stat-icon {
+    font-size: 2rem;
+    color: #007bff;
+    margin-right: 1rem;
+  }
+</style>
+
+<div class="container py-5">
+  <h2 class="text-center mb-5">🎓 Tableau de bord de l'étudiant</h2>
+
+  <!-- Première ligne : 3 cartes -->
+  <div class="row text-center mb-4">
+    <div class="col-md-4 col-sm-6 mb-4">
+      <div class="stat-card">
+        <div class="d-flex align-items-center justify-content-center">
+          <i class="fas fa-book stat-icon"></i>
+          <div>
+            <h5>{{ total_livres }}</h5>
+            <p class="mb-0">Livres disponibles</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 col-sm-6 mb-4">
+      <div class="stat-card">
+        <div class="d-flex align-items-center justify-content-center">
+          <i class="fas fa-layer-group stat-icon"></i>
+          <div>
+            <h5>{{ total_categories }}</h5>
+            <p class="mb-0">Catégories</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 col-sm-6 mb-4">
+      <div class="stat-card">
+        <div class="d-flex align-items-center justify-content-center">
+          <i class="fas fa-users stat-icon"></i>
+          <div>
+            <h5>{{ total_lecteurs }}</h5>
+            <p class="mb-0">Nombre d'étudiants</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deuxième ligne : 2 cartes -->
+  <div class="row text-center">
+    <div class="col-md-6 col-sm-6 mb-4">
+      <div class="stat-card">
+        <div class="d-flex align-items-center justify-content-center">
+          <i class="fas fa-eye stat-icon"></i>
+          <div>
+            <h5>{{ nb_consultations }}</h5>
+            <p class="mb-0">Livres consultés</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-sm-6 mb-4">
+      <div class="stat-card">
+        <div class="d-flex align-items-center justify-content-center">
+          <i class="fas fa-download stat-icon"></i>
+          <div>
+            <h5>{{ nb_telechargements }}</h5>
+            <p class="mb-0">Livres téléchargés</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Bienvenue sur IGESTION{% endblock %}
+{% block content %}
+    <div class="text-center text-white" style="padding: 150px 0;">
+        <h1>Bienvenue sur la plateforme IGESTION</h1>
+        <p>Gérez facilement vos documents.</p>
+        <a href="{% url 'connexion' %}" class="btn btn-primary mt-4">Connexion</a>
+    </div>
+{% endblock %}

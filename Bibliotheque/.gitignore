@@ -1,0 +1,20 @@
+# Fichiers Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+
+# Django
+/staticfiles/
+media/
+db.sqlite3
+
+# Environnement virtuel
+venv/
+.env
+
+# VS Code
+.vscode/
+
+# Fichiers de migration
+*/migrations/__pycache__/
+*/migrations/*.pyc

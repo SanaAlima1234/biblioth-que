@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+     
+</style>
+<p>{{message}}</p>
+<form action="{% url 'ajouter_admin' %}" method="POST">
+    {% csrf_token %}
+
+    <select class="form-control" name="profile" id="profile">
+        {% for profile in list_profile %}
+            <option class="text-dark"  value="{{ profile.id }}" >{{ profile }}</option>
+        {% endfor %}
+    </select>
+    
+
+    
+    
+    <input type="submit" class="btn btn primart">   
+</form>
+
+<script>
+    document.getElementById("search_bar").classList.add("d-none")
+</script>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'fontawesome/css/all.css' %}">
+
+<style>
+  .stat-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    padding: 1.5rem;
+    background-color: #ffffff;
+    transition: transform 0.2s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .stat-icon {
+    font-size: 2rem;
+    color: #007bff;
+    margin-right: 1rem;
+  }
+
+  .dashboard-links .btn {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+  }
+
+  .section-title {
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+  }
+</style>
+
+<div class="container py-5">
+  <h2 class="text-center mb-5">📊 Tableau de bord de l'administration</h2>
+
+  <!-- Statistiques -->
+  <div class="row text-center mb-5">
+    <div class="col-md-3 col-sm-6 mb-4">
+      <div class="stat-card">
+        <div class="d-flex align-items-center justify-content-center">
+          <i class="fas fa-users stat-icon"></i>
+          <div>
+            <h5>{{ nb_users }}</h5>
+            <p class="mb-0">Utilisateurs</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-4">
+      <div class="stat-card">
+        <div class="d-flex align-items-center justify-content-center">
+          <i class="fas fa-book stat-icon"></i>
+          <div>
+            <h5>{{ nb_books }}</h5>
+            <p class="mb-0">Livres</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-4">
+      <div class="stat-card">
+        <div class="d-flex align-items-center justify-content-center">
+          <i class="fas fa-folder-open stat-icon"></i>
+          <div>
+            <h5>{{ nb_categories }}</h5>
+            <p class="mb-0">Catégories</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-4">
+      <div class="stat-card">
+        <div class="d-flex align-items-center justify-content-center">
+          <i class="fas fa-user-shield stat-icon"></i>
+          <div>
+            <h5>{{ nb_admins }}</h5>
+            <p class="mb-0">Administrateurs</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liens de navigation -->
+  <h4 class="section-title text-center">Actions rapides</h4>
+  <div class="row dashboard-links text-center">
+    <div class="col-md-4 mb-3">
+      <a href="{% url 'gestion_utilisateurs' %}" class="btn btn-primary">
+        <i class="fas fa-user-cog me-2"></i> Gestion des utilisateurs
+      </a>
+      
+
+    </div>
+    <div class="col-md-4 mb-3">
+      <a href="{% url 'gestion_categories' %}" class="btn btn-info">
+        <i class="fas fa-layer-group me-2"></i> Gestion des catégories
+      </a>
+    </div>
+    <div class="col-md-4 mb-3">
+      <a href="{% url 'gestion_livres' %}" class="btn btn-success">
+        <i class="fas fa-book-open me-2"></i> Gestion des livres
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

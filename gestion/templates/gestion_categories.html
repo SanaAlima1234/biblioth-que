@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Gestion des catégories</h2>
+
+  <!-- Bouton pour ouvrir la modale d'ajout -->
+  <button class="btn btn-primary my-3" data-bs-toggle="modal" data-bs-target="#ajouterModal">Ajouter Catégorie</button>
+
+  <!-- Table des catégories -->
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for categorie in categories %}
+      <tr>
+        <td>{{ categorie.id }}</td>
+        <td>{{ categorie.nom }}</td>
+        <td>
+          <!-- Modifier -->
+          <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modifierModal{{ categorie.id }}">Modifier</button>
+          <!-- Supprimer -->
+          <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#supprimerModal{{ categorie.id }}">Supprimer</button>
+        </td>
+      </tr>
+
+      <!-- Modale Modification -->
+      <div class="modal fade" id="modifierModal{{ categorie.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="modifier">
+            <input type="hidden" name="id" value="{{ categorie.id }}">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Modifier la catégorie</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <input type="text" name="nom" class="form-control" value="{{ categorie.nom }}" required>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-warning">Enregistrer</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modale Suppression -->
+      <div class="modal fade" id="supprimerModal{{ categorie.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="supprimer">
+            <input type="hidden" name="id" value="{{ categorie.id }}">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Supprimer la catégorie</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                Voulez-vous vraiment supprimer la catégorie <strong>{{ categorie.nom }}</strong> ?
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-danger">Supprimer</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Modale Ajout -->
+<div class="modal fade" id="ajouterModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="ajouter">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ajouter une catégorie</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" name="nom" class="form-control" placeholder="Nom de la catégorie" required>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Ajouter</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

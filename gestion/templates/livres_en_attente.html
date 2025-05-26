@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-center mb-4 text-primary">📚 Livre(s) en attente de validation</h2>
+
+  {% for categorie in categories %}
+    <div class="mb-4">
+      <h4 class="text-secondary border-bottom pb-2">📁 {{ categorie.nom }}</h4>
+
+      {% with categorie.book_set.all as livres %}
+        <div class="row">
+          {% for livre in livres %}
+            {% if not livre.valide %}
+              <div class="col-md-4 mb-3">  {# Plus petit que col-md-6 #}
+                <div class="card shadow-sm" style="min-height: 150px;"> {# Hauteur réduite #}
+                  <div class="card-body p-2">  {# padding réduit #}
+                    <h6 class="card-title text-dark mb-1" style="font-size: 1rem; font-weight: 600;">{{ livre.title }}</h6>
+                    <p class="card-subtitle mb-2 text-muted" style="font-size: 0.85rem;">✍ {{ livre.author }}</p>
+
+                    <div class="d-flex gap-1">
+                      <!-- Lire -->
+                      <a href="{% url 'lire_livre' livre.id %}" target="_blank" class="btn btn-info btn-sm px-2 py-1" style="font-size: 0.8rem;">
+                        📖 Lire
+                      </a>
+
+                      <!-- Valider -->
+                      <form method="post" action="{% url 'valider_ou_supprimer_livre' livre.id %}">
+                        {% csrf_token %}
+                        <button name="action" value="valider" class="btn btn-success btn-sm px-2 py-1" style="font-size: 0.8rem;">
+                          ✔ Valider
+                        </button>
+                      </form>
+
+                      <!-- Supprimer -->
+                      <form method="post" action="{% url 'valider_ou_supprimer_livre' livre.id %}">
+                        {% csrf_token %}
+                        <button name="action" value="supprimer" class="btn btn-danger btn-sm px-2 py-1" style="font-size: 0.8rem;">
+                          🗑 Supprimer
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endwith %}
+    </div>
+  {% empty %}
+    <div class="alert alert-info text-center">Aucun livre en attente pour le moment.</div>
+  {% endfor %}
+</div>
+{% endblock %}

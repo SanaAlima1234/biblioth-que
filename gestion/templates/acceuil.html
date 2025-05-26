@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+  body {
+    background-color: #f8f9fa;
+  }
+
+  .top-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Centré horizontalement */
+  align-items: center;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+  .top-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Centré horizontalement */
+  align-items: center;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.top-bar h2 {
+  font-weight: bold;
+  color: #343a40; /* Gris foncé élégant */
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.search-bar {
+  background-color: #ffffff;
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  width: 75%; /* Moins large */
+  margin: 0 auto 1.5rem auto; /* Centré horizontalement */
+}
+
+.category-title {
+  font-weight: bold;
+  color: #495057; /* Gris foncé joli */
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+  .btn-ajouter {
+    margin-left: auto;
+  }
+
+  
+
+  .book-card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px;
+    height: 100%;
+    font-size: 0.8rem;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    transition: 0.3s;
+  }
+
+  .book-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  }
+
+  .book-card img {
+    max-height: 100px;
+    object-fit: contain;
+    margin-bottom: 8px;
+  }
+
+  .book-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+    color: #333;
+  }
+
+  .book-author {
+    color: #666;
+    font-size: 0.75rem;
+    margin-bottom: 8px;
+  }
+
+  .book-actions .btn {
+    font-size: 0.75rem;
+    padding: 4px 6px;
+  }
+</style>
+
+<div class="container pt-3">
+
+  <div class="top-bar d-flex align-items-center">
+    <h2 class="mb-0 flex-grow-1">📚 Bibliothèque</h2>
+    {% if request.user.role == 'etudiant' %}
+      <button class="btn btn-success btn-sm btn-ajouter" data-bs-toggle="modal" data-bs-target="#ajoutLivreModal">
+        <i class="fas fa-plus"></i> Ajouter un livre
+      </button>
+    {% elif request.user.role == 'admin' %}
+      <a href="{% url 'adminPage' %}" class="btn btn-success btn-sm btn-ajouter">
+        <i class="fas fa-cog"></i> Page admin
+      </a>
+    {% endif %}
+  </div>
+  {% if user.is_authenticated and user.role == 'etudiant' %}
+  <div class="text-end mb-3">
+    <a href="{% url 'dashboard_etudiant' %}" class="btn btn-primary">
+      <i class="bi bi-bar-chart"></i> Tableau de bord
+    </a>
+  </div>
+{% endif %}
+
+  
+</div>
+
+
+  <div class="search-bar">
+    <form method="POST" class="row g-2">
+      {% csrf_token %}
+      <div class="col-md-5">
+        <input type="text" name="requete" class="form-control" placeholder="Rechercher un livre..." value="{{ requete }}">
+      </div>
+      <div class="col-md-4">
+        <select name="categorie" class="form-select">
+          <option value="">Toutes les catégories</option>
+          {% for cat in liste_categorie %}
+            <option value="{{ cat.id }}" {% if cat.id|stringformat:"s" == categorie_id %}selected{% endif %}>
+              {{ cat.nom }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <button type="submit" class="btn btn-primary w-100">
+          🔍 Rechercher
+        </button>
+      </div>
+    </form>
+  </div>
+
+  {% for categorie in liste_categorie %}
+  <div class="mt-4">
+    <div class="category-title">{{ categorie.nom }}</div>
+    <div class="row g-2">
+      {% for book in categorie.book_set.all|dictsort:"title" %}
+        {% if book.valide %}
+          {% if not requete or requete|lower in book.title|lower or requete|lower in book.author|lower %}
+            {% if not categorie_id or categorie_id == book.categorie.id|stringformat:"s" %}
+              <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                <div class="book-card">
+                  <img src="{{ book.cover.url }}" alt="Couverture">
+                  <div class="book-title">{{ book.title }}</div>
+                  <div class="book-author">{{ book.author }}</div>
+                  <div class="book-actions d-flex justify-content-center gap-1">
+                       <!-- Consultation -->
+                      <a href="{% url 'consulter_livre' book.id %}" class="btn btn-outline-primary btn-sm">
+                      📖 Lire
+                       </a>
+  
+                      <!-- Téléchargement -->
+                      <a href="{% url 'telecharger_livre' book.id %}" class="btn btn-primary btn-sm">
+                       ⬇ Télécharger
+                      </a>
+                  </div>
+
+                </div>
+              </div>
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+{% endfor %}
+
+
+</div>
+
+<!-- Modal pour ajouter un livre -->
+<div class="modal fade" id="ajoutLivreModal" tabindex="-1" aria-labelledby="ajoutLivreModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" enctype="multipart/form-data" action="">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="ajoutLivreModalLabel">Ajouter un nouveau livre</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-2">
+            <label for="title" class="form-label">Titre</label>
+            <input type="text" class="form-control" id="title" name="title" required>
+          </div>
+          <div class="mb-2">
+            <label for="author" class="form-label">Auteur</label>
+            <input type="text" class="form-control" id="author" name="author" required>
+          </div>
+          <div class="mb-2">
+            <label for="cover" class="form-label">Image de couverture</label>
+            <input type="file" class="form-control" id="cover" name="cover" accept="image/*" required>
+          </div>
+          <div class="mb-2">
+            <label for="pdf" class="form-label">Fichier PDF</label>
+            <input type="file" class="form-control" id="pdf" name="pdf" accept="application/pdf" required>
+          </div>
+          <div class="mb-2">
+            <label for="categorie" class="form-label">Catégorie</label>
+            <select class="form-select" id="categorie" name="categorie" required>
+              <option value="" disabled selected>Choisir une catégorie</option>
+              {% for categorie in liste_categorie %}
+                <option value="{{ categorie.id }}">{{ categorie.nom }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-primary">Ajouter</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

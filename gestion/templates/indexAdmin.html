@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .BTN{
+        
+        background-color: rgb(17, 164, 208);;
+        width: 300px;
+        color: white;
+       
+    }
+    body{
+		background-image:url('/static/images/pizza.jpg');
+		background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        height: 100%;
+        }
+</style>
+<div class="" style="margin-top: 30px;">
+    
+    <div class="mt-4 d-block col-12 col-sm-9 col-md-8 col-lg-7 mx-auto justify-content-center">
+        <p class="text-center fs-4" style="border-bottom: 1px solid #ccc; color: rgb(5, 5, 5);">Administration</p>
+        <p class="text-center ">
+            <a href="{% url 'gestion_restaurant' %}" class="BTN btn mt-2" >Gestion des Restaurants</a>
+        </p>
+        <p class="text-center">
+            <a href="{% url 'gestion_produit' %}" class="btn BTN mt-2" >Gestion des Produits</a>
+        </p>
+        <p class="text-center">
+            <a href="{% url 'gestion_categories' %}" class="btn BTN mt-2" >Gestion des Categories</a>
+        </p>
+
+        <p class="text-center">
+             <a href="{% url 'gestion_reservations' %}" class="BTN btn mt-2" >Gestion des Reservation</a>
+        </p>
+        
+        <p class="text-center">
+            <a href="{% url 'gestion_commandes' %}" class="BTN btn mt-2" >Gestion des Commandes</a>
+
+        </p>
+
+        <p class="text-center">
+            <a href="/__BossWarma_75_Z_OK/Administration/profile/" class="BTN btn mt-2" >Ajouter un Administrateur</a> 
+        </p>
+    </div>
+</div>
+<script>
+    document.getElementById("search_bar").classList.add("d-none")
+</script>
+{% endblock %}

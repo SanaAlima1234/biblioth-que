@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4 text-center">👤 Mon Profil</h2>
+
+  <div class="card mx-auto" style="max-width: 500px;">
+    <div class="card-body text-center">
+      <i class="fas fa-user-circle fa-5x mb-3 text-secondary"></i>
+      <h4 class="card-title">{{ request.user.username }}</h4>
+      <p class="card-text">
+        <strong>Nom complet :</strong> {{ request.user.first_name }} {{ request.user.last_name }}<br>
+        <strong>Email :</strong> {{ request.user.email }}<br>
+        {% if user.role %}
+        <strong>Rôle :</strong> {{ request.user.role|title }}
+        {% endif %}
+      </p>
+
+      <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+        ✏️ Modifier mes informations
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de modification -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'modifier_profil' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="editProfileModalLabel">Modifier mon profil</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="first_name" class="form-label">Prénom</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ request.user.first_name }}">
+          </div>
+          <div class="mb-3">
+            <label for="last_name" class="form-label">Nom</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ request.user.last_name }}">
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ request.user.email }}">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-success">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

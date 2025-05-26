@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Gestion des livres</h2>
+
+  <button class="btn btn-primary my-3" data-bs-toggle="modal" data-bs-target="#ajouterModal">Ajouter Livre</button>
+  <form action="{% url 'livres_en_attente' %}" method="get" style="display: inline;">
+  <button type="submit" class="btn btn-warning">📥 Livres en attente</button>
+</form>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Titre</th>
+        <th>Auteur</th>
+        <th>Couverture</th>
+        <th>PDF</th>
+        <th>Catégorie</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for livre in livres %}
+      <tr>
+        <td>{{ livre.title }}</td>
+        <td>{{ livre.author }}</td>
+        <td><img src="{{ livre.cover.url }}" width="60"></td>
+        <td><a href="{{ livre.pdf.url }}" class="btn btn-sm btn-outline-secondary" target="_blank">Télécharger</a></td>
+        <td>{{ livre.categorie.nom }}</td>
+        <td>
+          <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modifierModal{{ livre.id }}">Modifier</button>
+          <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#supprimerModal{{ livre.id }}">Supprimer</button>
+        </td>
+      </tr>
+
+      <!-- Modal Modifier -->
+      <div class="modal fade" id="modifierModal{{ livre.id }}" tabindex="-1">
+        <div class="modal-dialog">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="modifier">
+            <input type="hidden" name="id" value="{{ livre.id }}">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Modifier le livre</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <input type="text" name="titre" value="{{ livre.title }}" class="form-control mb-2" required>
+                <input type="text" name="auteur" value="{{ livre.author }}" class="form-control mb-2" required>
+                <select name="categorie" class="form-select mb-2" required>
+                  {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if cat.id == livre.categorie.id %}selected{% endif %}>{{ cat.nom }}</option>
+                  {% endfor %}
+                </select>
+                <label>Nouvelle couverture (facultatif)</label>
+                <input type="file" name="cover" class="form-control mb-2" accept="image/*">
+                <label>Nouveau fichier PDF (facultatif)</label>
+                <input type="file" name="pdf" class="form-control" accept="application/pdf">
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-warning">Enregistrer</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      
+      <div class="modal fade" id="supprimerModal{{ livre.id }}" tabindex="-1">
+        <div class="modal-dialog">
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="supprimer">
+            <input type="hidden" name="id" value="{{ livre.id }}">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Supprimer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                Supprimer le livre <strong>{{ livre.title }}</strong> ?
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-danger">Confirmer</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal Ajouter Livre -->
+<div class="modal fade" id="ajouterModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="ajouter">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ajouter un livre</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" name="titre" class="form-control mb-2" placeholder="Titre du livre" required>
+          <input type="text" name="auteur" class="form-control mb-2" placeholder="Auteur" required>
+          <select name="categorie" class="form-select mb-2" required>
+            <option value="">-- Choisir une catégorie --</option>
+            {% for cat in categories %}
+              <option value="{{ cat.id }}">{{ cat.nom }}</option>
+            {% endfor %}
+          </select>
+          <input type="file" name="cover" class="form-control mb-2" accept="image/*" required>
+          <input type="file" name="pdf" class="form-control" accept="application/pdf" required>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Ajouter</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}
