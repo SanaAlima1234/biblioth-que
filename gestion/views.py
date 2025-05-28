@@ -62,11 +62,11 @@ def inscription(request):
     return render(request, 'inscription.html')
 
 
-@login_required
+
 def profil_view(request):
     return render(request, 'profile.html')
 
-@login_required
+
 def modifier_profil(request):
     if request.method == 'POST':
         user = request.user
@@ -77,12 +77,12 @@ def modifier_profil(request):
         messages.success(request, "Profil mis à jour avec succès.")
     return redirect('profil')
     
-@login_required
+
 def accueil_public(request):
     return render(request, 'accueil_public.html')  # page simple avec image et navbar
 
     
-@login_required
+
 def acceuil(request):
     liste_categorie = Categorie.objects.all()
     requete = ""
@@ -428,3 +428,6 @@ def livres_telecharges(request):
     telechargements = Telechargement.objects.filter(utilisateur=request.user)
     livres_uniques = list(set(t.Book for t in telechargements))
     return render(request, 'livres_telecharges.html', {'livres': livres_uniques})
+
+def test_index_template(request):
+    return render(request, 'index.html')

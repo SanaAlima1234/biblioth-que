@@ -33,6 +33,8 @@ urlpatterns = [
     path('telecharger/<int:book_id>/', views.telecharger_livre, name='telecharger_livre'),
     path('mes-livres-consultes/', views.livres_consultes, name='livres_consultes'),
     path('mes-livres-telecharges/', views.livres_telecharges, name='livres_telecharges'),
+    path('test-index/', views.test_index_template, name='test_index'),
+
 
 
 ]
